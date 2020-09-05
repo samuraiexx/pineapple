@@ -6,26 +6,24 @@
 
 using namespace std;
 
-const int N = 1e3;
+const int N = 300;
+
+enum class Token {
+  // palavras reservadas
+  UNKNOWN,
+  ARRAY, BOOLEAN, BREAK, CHAR, CONTINUE, DO, ELSE, FALSE, FUNCTION, IF,
+  INTEGER, FLOAT, OF, STRING, STRUCT, TRUE, TYPE, VAR, WHILE,
+  COLON, SEMI_COLON, COMMA, EQUALS, LEFT_SQUARE, RIGHT_SQUARE,
+  LEFT_BRACES, RIGHT_BRACES, LEFT_PARENTHESIS, RIGHT_PARENTHESIS, AND,
+  OR, LESS_THAN, GREATER_THAN, LESS_OR_EQUAL, GREATER_OR_EQUAL,
+  NOT_EQUAL, EQUAL_EQUAL, PLUS, PLUS_PLUS, MINUS, MINUS_MINUS, TIMES,
+  DIVIDE, DOT, NOT,
+  CHARACTER, INT_NUMERAL, FLOAT_NUMERAL, STRINGVAL, ID,
+  EOF_
+};
 
 class Tokenizer {
-  int trie[N][128];
-  int endToken[N];
-  int size = 1;
-
-  enum Token {
-    // palavras reservadas
-    ARRAY, BOOLEAN, BREAK, CHAR, CONTINUE, DO, ELSE, FALSE, FUNCTION, IF,
-    INTEGER, FLOAT, OF, STRING, STRUCT, TRUE, TYPE, VAR, WHILE,
-    COLON, SEMI_COLON, COMMA, EQUALS, LEFT_SQUARE, RIGHT_SQUARE,
-    LEFT_BRACES, RIGHT_BRACES, LEFT_PARENTHESIS, RIGHT_PARENTHESIS, AND,
-    OR, LESS_THAN, GREATER_THAN, LESS_OR_EQUAL, GREATER_OR_EQUAL,
-    NOT_EQUAL, EQUAL_EQUAL, PLUS, PLUS_PLUS, MINUS, MINUS_MINUS, TIMES,
-    DIVIDE, DOT, NOT,
-    CHARACTER, INT_NUMERAL, FLOAT_NUMERAL, STRINGVAL, ID,
-    UNKNOWN
-  };
-
+public:
   Tokenizer() {
     string allCharsExcept, allChars;
     for (int c = 0; c < 128; c++) {
@@ -33,11 +31,19 @@ class Tokenizer {
       if (c != '"') allCharsExcept.push_back(c);
     }
 
-    addToken({"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"}, Token::ID, true);
+    trie[1][' '] = 1;
+    trie[1]['\n'] = 1;
+    trie[1]['\t'] = 1;
+    trie[1]['\v'] = 1;
+    trie[1]['\f'] = 1;
+    trie[1]['\r'] = 1;
+
+    addToken({ "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" }, Token::ID);
+    addToken({ "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-" }, Token::ID, true);
     addToken({ "0123456789" }, Token::INT_NUMERAL, true);
     addToken({ "0123456789", ".", "0123456789" }, Token::FLOAT_NUMERAL, true);
     addToken({ "\"", allCharsExcept }, Token::UNKNOWN, true);
-    addToken({ "\"", allCharsExcept, "\""}, Token::STRINGVAL);
+    addToken({ "\"", allCharsExcept, "\"" }, Token::STRINGVAL);
     addToken({ "'", allChars, "'" }, Token::CHARACTER);
 
     addStringToken("Array", Token::ARRAY);
@@ -85,12 +91,45 @@ class Tokenizer {
     addStringToken("/", Token::DIVIDE);
     addStringToken(".", Token::DOT);
     addStringToken("!", Token::NOT);
+    addStringToken("\x03", Token::EOF_);
   }
+
+  vector<pair<Token, string>> tokenizeString(string s) {
+    vector<pair<Token, string>> t;
+
+    int i = 0;
+    while (i < s.size()) {
+      string word;
+      int node = 1;
+
+      while (i < s.size()) {
+        char c = s[i++];
+        if (!trie[node][c]) {
+          i--;
+          break;
+        }
+
+        node = trie[node][c];
+        if (node > 1) {
+          word.push_back(c);
+        }
+      }
+
+      t.emplace_back(endToken[node], word);
+    }
+
+    return t;
+  }
+
+private:
+  int trie[N][128] = {};
+  int size = 1;
+  Token endToken[N];
 
   void addStringToken(string pattern, Token token, bool recursive = false) {
     vector<string> p;
     for (auto c : pattern) p.emplace_back(1, c);
-    addToken(p, token, false);
+    addToken(p, token, recursive);
   }
 
   void addToken(vector<string> pattern, Token token, bool recursive = false, int node = 1, bool copyLast = false) {
@@ -140,6 +179,4 @@ class Tokenizer {
     addToken(pattern, token, recursive, nxt, copyLast);
   }
 
-  vector<int> tokenizeString(string t) {
-  }
 };
