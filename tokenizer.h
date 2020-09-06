@@ -4,23 +4,11 @@
 #include <algorithm>
 #include <unordered_map>
 
+#include "token.h"
+
 using namespace std;
 
 const int N = 300;
-
-enum class Token {
-  // palavras reservadas
-  UNKNOWN,
-  ARRAY, BOOLEAN, BREAK, CHAR, CONTINUE, DO, ELSE, FALSE, FUNCTION, IF,
-  INTEGER, FLOAT, OF, STRING, STRUCT, TRUE, TYPE, VAR, WHILE,
-  COLON, SEMI_COLON, COMMA, EQUALS, LEFT_SQUARE, RIGHT_SQUARE,
-  LEFT_BRACES, RIGHT_BRACES, LEFT_PARENTHESIS, RIGHT_PARENTHESIS, AND,
-  OR, LESS_THAN, GREATER_THAN, LESS_OR_EQUAL, GREATER_OR_EQUAL,
-  NOT_EQUAL, EQUAL_EQUAL, PLUS, PLUS_PLUS, MINUS, MINUS_MINUS, TIMES,
-  DIVIDE, DOT, NOT,
-  CHARACTER, INT_NUMERAL, FLOAT_NUMERAL, STRINGVAL, ID,
-  EOF_
-};
 
 class Tokenizer {
 public:
@@ -65,9 +53,9 @@ public:
     addStringToken("type", Token::TYPE);
     addStringToken("var", Token::VAR);
     addStringToken("while", Token::WHILE);
-    addStringToken(",", Token::COLON);
+    addStringToken(",", Token::COMMA);
     addStringToken(";", Token::SEMI_COLON);
-    addStringToken(":", Token::COMMA);
+    addStringToken(":", Token::COLON);
     addStringToken("=", Token::EQUALS);
     addStringToken("[", Token::LEFT_SQUARE);
     addStringToken("]", Token::RIGHT_SQUARE);

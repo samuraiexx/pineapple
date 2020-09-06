@@ -9,11 +9,12 @@ int main() {
   Tokenizer tokenizer;
 
   string code = R"(
-  int x = 10;
-  function f() {
-    char z = '1';
-    string s = "string";
-  }
+    int x = 10;
+    int y = 10.2384;
+    function f() {
+      char z = '1';
+      string s = "string";
+    }
 )";
   code.push_back('\x03'); // End of Text
 
