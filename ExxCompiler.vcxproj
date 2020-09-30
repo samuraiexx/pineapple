@@ -120,6 +120,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <HeapCommitSize>2GB</HeapCommitSize>
+      <StackCommitSize>2GB</StackCommitSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -136,7 +138,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <HeapCommitSize>10MB</HeapCommitSize>
+      <HeapCommitSize>2GB</HeapCommitSize>
+      <StackCommitSize>2GB</StackCommitSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

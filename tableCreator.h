@@ -102,7 +102,7 @@ private:
     vector<int> first;
 
     for (const vector<int>& right : rights) {
-      if (right.empty()) continue;
+      if (right.empty() || right[0] == token) continue;
 
       for (auto rightFirst : getFirst(right[0])) {
         first.push_back(rightFirst);
@@ -228,6 +228,8 @@ private:
     unordered_map<int, vector<StateLine>> next;
 
     const auto baseStateLine = baseStateLines[0];
+    dbs("Generating for " + token2String(baseStateLine.genToken) + " at line " + to_string(baseStateLine.line) + " and position " + to_string(baseStateLine.statePos));
+    // db(token2String(baseStateLine.genToken) _ baseStateLine.line _ baseStateLine.statePos);
 
     bool isDifferentState = genState(baseStateLines);
     if (!isDifferentState) {
@@ -323,13 +325,28 @@ private:
   }
 
   vector<StateLine> genStateLines(const StateLine& stateLine) {
+    set<StateLine> vis;
+    return genStateLines(stateLine, vis);
+  }
+
+  vector<StateLine> genStateLines(const StateLine& stateLine, set<StateLine>& vis) {
+    // db(stateLine.genToken _ stateLine.line _ stateLine.lookAhead);
+    if (vis.count(stateLine)) {
+      return {};
+    }
+    vis.insert(stateLine);
+
     vector<StateLine> stateLines = { stateLine };
     auto genRuleLine = rules[stateLine.genToken][stateLine.line];
+
+    if (genRuleLine.size() == stateLine.statePos) {
+      return stateLines;
+    }
 
     auto& ruleLines = rules[genRuleLine[stateLine.statePos]];
     for (int i = 0; i < ruleLines.size(); i++) {
       int token = genRuleLine[stateLine.statePos];
-      for (auto newStateLine : genStateLines(StateLine(token, i, getLookAhead(token, genRuleLine, stateLine.lookAhead)))) {
+      for (auto newStateLine : genStateLines(StateLine(token, i, getLookAhead(token, genRuleLine, stateLine.lookAhead)), vis)) {
         stateLines.push_back(newStateLine);
       }
     }

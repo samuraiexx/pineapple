@@ -18,6 +18,8 @@ enum Token {
 enum ExToken {
   P = Token::TOKEN_END, LDE, DE, DF, DT, T, B, LDV, LS,
   DV, LI, E, S, LV, L, R, Y, F, LP, LE, DC, P2,
+  TIK1, TIK2, TIK3, TIK4, TIK5, TIK6, TIK7, TIK8, 
+  TOK1, TOK2, TOK3, TOK4, TOK5, TOK6, TOK7, TOK8, 
   EXTOKEN_END
 };
 
@@ -173,6 +175,38 @@ std::string token2String(int t) {
     return "DC";
   case ExToken::P2:
     return "P2";
+  case ExToken::TIK1:
+    return "TIK1";
+  case ExToken::TIK2:
+    return "TIK2";
+  case ExToken::TIK3:
+    return "TIK3";
+  case ExToken::TIK4:
+    return "TIK4";
+  case ExToken::TIK5:
+    return "TIK5";
+  case ExToken::TIK6:
+    return "TIK6";
+  case ExToken::TIK7:
+    return "TIK7";
+  case ExToken::TIK8:
+    return "TIK8";
+  case ExToken::TOK1:
+    return "TOK1";
+  case ExToken::TOK2:
+    return "TOK2";
+  case ExToken::TOK3:
+    return "TOK3";
+  case ExToken::TOK4:
+    return "TOK4";
+  case ExToken::TOK5:
+    return "TOK5";
+  case ExToken::TOK6:
+    return "TOK6";
+  case ExToken::TOK7:
+    return "TOK7";
+  case ExToken::TOK8:
+    return "TOK8";
   case ExToken::EXTOKEN_END:
     return "EXTOKEN_END";
   case Token::UNKNOWN:

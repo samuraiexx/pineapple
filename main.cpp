@@ -20,44 +20,45 @@ void main(int argc, char** argv) {
   
   if (argc == 1) {
     code = R"(
-      type T1 = array[2] of integer;
-      type T2 = struct { s : string };
+   type T1 = array[2] of integer;
+   type T2 = struct { s : string };
 
-      var x, y, z: integer;
-      var c : char;
-      var s : string;
-      x = 1;
-      y = 2;
-      z = 3;
+   function main(x : integer): integer {
+     var x, y, z: integer;
+     var c : char;
+     var s : string;
+     x = 1;
+     y = 2;
+     z = 3;
 
-      c = 'a';
-      s = "a few words";
-      x = y + z;
+     c = 'a';
+     s = "a few words";
+     x = y + z;
 
-      if (x > 1) {
-        y++;
-        z = y * z;
-      }
+     if (x > 1) {
+       y++;
+       z = y * z;
+     }
 
-      while(x < 10 && y > 1){
-        x++;
-        z++;
-        if(z > 5) {
-          break;
-        }
-      }
+     while(x < 10 && y > 1){
+       x++;
+       z++;
+       if(z > 5) {
+         break;
+       }
+     }
+  }
 
-      function f(a: integer): char {
-      }
+   function f(a: integer): char {
+   }
     )";
   } else {
     ifstream t(argv[1]);
     code = string(istreambuf_iterator<char>(t), istreambuf_iterator<char>());
   }
 
-  code = "*a=b"; // db 
   code.push_back('\x03'); // End of Text
-  const auto x = tokenizer.tokenizeCode(code);
+  const auto tokens = tokenizer.tokenizeCode(code);
 
   /** Test Code for Tokenizer
    ** 
@@ -71,7 +72,7 @@ void main(int argc, char** argv) {
   cout << table << endl;
 
   Parser parser(table);
-  parser.parseCode(x);
+  parser.parseCode(tokens);
 
   return;
 }
