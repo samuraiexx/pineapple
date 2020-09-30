@@ -139,7 +139,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="parser.h" />
+    <ClInclude Include="debug.h" />
+    <ClInclude Include="rules.h" />
+    <ClInclude Include="tableCreator.h" />
     <ClInclude Include="token.h" />
     <ClInclude Include="tokenizer.h" />
   </ItemGroup>

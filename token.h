@@ -21,7 +21,11 @@ enum ExToken {
   EXTOKEN_END
 };
 
-std::string token2String(Token t) {
+bool isBaseToken(int t) {
+  return t < TOKEN_END;
+}
+
+std::string token2String(int t) {
   switch (t) {
   case Token::ARRAY:
     return "ARRAY";
@@ -125,8 +129,52 @@ std::string token2String(Token t) {
   // return "NUMERAL";
   case Token::EOF_:
     return "EOF_";
-  case Token::TOKEN_END:
-    return "TOKEN_END";
+  case ExToken::P:
+    return "P";
+  case ExToken::LDE:
+    return "LDE";
+  case ExToken::DE:
+    return "DE";
+  case ExToken::DF:
+    return "DF";
+  case ExToken::DT:
+    return "DT";
+  case ExToken::T:
+    return "T";
+  case ExToken::B:
+    return "B";
+  case ExToken::LDV:
+    return "LDV";
+  case ExToken::LS:
+    return "LS";
+  case ExToken::DV:
+    return "DV";
+  case ExToken::LI:
+    return "LI";
+  case ExToken::E:
+    return "E";
+  case ExToken::S:
+    return "S";
+  case ExToken::LV:
+    return "LV";
+  case ExToken::L:
+    return "L";
+  case ExToken::R:
+    return "R";
+  case ExToken::Y:
+    return "Y";
+  case ExToken::F:
+    return "F";
+  case ExToken::LP:
+    return "LP";
+  case ExToken::LE:
+    return "LE";
+  case ExToken::DC:
+    return "DC";
+  case ExToken::P2:
+    return "P2";
+  case ExToken::EXTOKEN_END:
+    return "EXTOKEN_END";
   case Token::UNKNOWN:
   default:
     return "UNKNOWN";

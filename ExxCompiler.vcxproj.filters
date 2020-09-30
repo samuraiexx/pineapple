@@ -18,10 +18,16 @@
     <ClInclude Include="tokenizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="parser.h">
+    <ClInclude Include="token.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="token.h">
+    <ClInclude Include="debug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tableCreator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rules.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

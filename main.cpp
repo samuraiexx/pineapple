@@ -1,17 +1,19 @@
-#define db(x) cout << #x << " = " << x << endl
-#define _ << ", " << 
+#include "debug.h"
 
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <streambuf>
+#include <set>
 
 #include "tokenizer.h"
-#include "parser.h"
+#include "tableCreator.h"
 
 using namespace std;
 
-int main(int argc, char** argv) {
+void printTable(const vector<vector<int>>& table);
+
+void main(int argc, char** argv) {
   Tokenizer tokenizer;
 
   ifstream t("file.txt");
@@ -63,8 +65,30 @@ int main(int argc, char** argv) {
     cout << '(' << token2String(t.primaryToken) << ", " << t.secondaryToken << ')' << endl;
   }
   **/
+  TableCreator tableCreator;
+  auto table = tableCreator.getTable();
 
-  Parser parser;
+  printTable(table);
+}
 
-  return 0;
+void printTable(const vector<vector<int>>& table) {
+  set<int> skipColumn;
+
+  for (int j = 0; table.size() && j < table[0].size(); j++) {
+    bool onlyZeros = true;
+    for (int i = 0; i < table.size(); i++) {
+      onlyZeros = onlyZeros && table[i][j] == 0;
+    }
+    if(onlyZeros) skipColumn.insert(j);
+  }
+
+  for (int i = 0; i < table.size(); i++) {
+    for (int j = 0; j < table[0].size(); j++) {
+      if (skipColumn.count(j)) {
+        continue;
+      }
+      cout << table[i][j] << '\t';
+    }
+    cout << endl;
+  }
 }
