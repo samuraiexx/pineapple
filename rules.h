@@ -1,5 +1,12 @@
 #pragma once
 
+struct Reduction {
+  int len;
+  int leftToken;
+
+  Reduction(int leftToken, int len) : len(len), leftToken(leftToken) {}
+};
+
 /*
 unordered_map<int, vector<vector<int>>> rules = {
     {P2, {{P, EOF_}}},
@@ -99,3 +106,15 @@ unordered_map<int, vector<vector<int>>> rules = {
     {L, {{TIMES, R}, {ID}} },
   };
   // **/
+
+
+  int getReductionId(int token, int line) {
+    return 10 * token + line;
+  }
+
+  Reduction getReductionFromId(int reductionId) {
+    const int leftToken = reductionId / 10;
+    auto rule = rules[leftToken][reductionId % 10];
+
+    return Reduction(leftToken, rule.size());
+  }

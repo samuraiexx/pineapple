@@ -48,7 +48,6 @@ struct StateLine {
 class TableCreator {
 public:
   TableCreator() {
-    db(1);
     fillTable();
   }
 
@@ -221,7 +220,7 @@ private:
     // Must first create all the states to have all lookaheads - Exponential
     fillTableStatesDfs();
     // Now indeed fills the table o(#states)
-    table.assign(states.size() + 1, vector<int>(EXTOKEN_END));
+    table.assign(states.size() + 1, vector<int>(EXTOKEN_END, 0));
     fillTableDfs();
   }
 
@@ -272,7 +271,7 @@ private:
       if (ruleRight.size() == stateLine.statePos) {
         //Reduction
         int reductionId = getReductionId(stateLine.genToken, stateLine.line);
-          db("Reduction" _ state.id _ ruleRight _ stateLine.lookAhead _ token2String(stateLine.genToken) _ stateLine.line);
+          // db("Reduction" _ state.id _ ruleRight _ stateLine.lookAhead _ token2String(stateLine.genToken) _ stateLine.line);
         for (auto la : stateLine.lookAhead) {
           table[state.id][la] = -reductionId;
         }
@@ -289,7 +288,7 @@ private:
       int nextStateId = fillTableDfs(nextBase.second);
 
       table[state.id][nextToken] = nextStateId;
-      db("NextState" _ state.id _ token2String(nextToken) _ nextStateId);
+      // db("NextState" _ state.id _ token2String(nextToken) _ nextStateId);
     }
 
     return state.id;
@@ -373,12 +372,5 @@ private:
     return mergedLines;
   }
 
-  int getReductionId(int token, int line) {
-    return 10 * token + line;
-  }
-
-  pair<int, int> getRuleFromReduction(int reductionId) {
-    return { reductionId / 10, reductionId % 10 };
-  }
 };
 

@@ -8,10 +8,9 @@
 
 #include "tokenizer.h"
 #include "tableCreator.h"
+#include "paser.h"
 
 using namespace std;
-
-void printTable(const vector<vector<int>>& table);
 
 void main(int argc, char** argv) {
   Tokenizer tokenizer;
@@ -56,6 +55,7 @@ void main(int argc, char** argv) {
     code = string(istreambuf_iterator<char>(t), istreambuf_iterator<char>());
   }
 
+  code = "*a=b"; // db 
   code.push_back('\x03'); // End of Text
   const auto x = tokenizer.tokenizeCode(code);
 
@@ -68,27 +68,10 @@ void main(int argc, char** argv) {
   TableCreator tableCreator;
   auto table = tableCreator.getTable();
 
-  printTable(table);
-}
+  cout << table << endl;
 
-void printTable(const vector<vector<int>>& table) {
-  set<int> skipColumn;
+  Parser parser(table);
+  parser.parseCode(x);
 
-  for (int j = 0; table.size() && j < table[0].size(); j++) {
-    bool onlyZeros = true;
-    for (int i = 0; i < table.size(); i++) {
-      onlyZeros = onlyZeros && table[i][j] == 0;
-    }
-    if(onlyZeros) skipColumn.insert(j);
-  }
-
-  for (int i = 0; i < table.size(); i++) {
-    for (int j = 0; j < table[0].size(); j++) {
-      if (skipColumn.count(j)) {
-        continue;
-      }
-      cout << table[i][j] << '\t';
-    }
-    cout << endl;
-  }
+  return;
 }

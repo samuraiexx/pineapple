@@ -21,7 +21,13 @@ struct PSToken {
   PSToken(Token primaryToken, int secondaryToken) : primaryToken(primaryToken), secondaryToken(secondaryToken) {}
   Token primaryToken;
   int secondaryToken;
+
 };
+
+std::ostream& operator<<(std::ostream& os, const PSToken &v) {
+  os << "{" << token2String(v.primaryToken) << ", " << v.secondaryToken << "}";
+  return os;
+}
 
 class Tokenizer {
 public:
