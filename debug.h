@@ -41,7 +41,7 @@ std::ostream& operator<<(std::ostream& os, const std::pair<T, V>& v) {
   return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const std::vector<std::vector<int>>& table) {
+std::ostream& putTable(std::ostream& os, const std::vector<std::vector<int>>& table, bool _skipColumn = true) {
   std::set<int> skipColumn;
 
   for (int j = 0; table.size() && j < table[0].size(); j++) {
@@ -52,25 +52,31 @@ std::ostream& operator<<(std::ostream& os, const std::vector<std::vector<int>>& 
     if(onlyZeros) skipColumn.insert(j);
   }
 
+  os << '\t';
   for (int j = 0; j < table[0].size(); j++) {
-    if (skipColumn.count(j)) {
+    if (skipColumn.count(j) && _skipColumn) {
       continue;
     }
 
-    os << token2String(j) << '\t';
+    os << token2String(j) << "\t";
   }
   os << '\n';
 
   for (int i = 1; i < table.size(); i++) {
+    os << i << '\t';
     for (int j = 0; j < table[0].size(); j++) {
-      if (skipColumn.count(j)) {
+      if (skipColumn.count(j) && _skipColumn) {
         continue;
       }
-      os << table[i][j] << '\t';
+      os << table[i][j] << "\t";
     }
     os << '\n';
   }
 
   return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const std::vector<std::vector<int>>& table) {
+  return putTable(os, table);
 }
 
