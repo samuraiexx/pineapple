@@ -14,12 +14,20 @@ public:
 
     vector<pair<int, Attrib>> stack({ {1, Attrib()} });
 
-    for (auto token : tokens) {
-      int nextState;
-      db(token2String(token.primaryToken));
+    int i = 0;
+    db(token2String(tokens[0].primaryToken));
 
-      while ((nextState = table[stack.back().first][token.primaryToken]) < 0) {
-        Reduction reduction = getReductionFromId(-nextState);
+    do {
+      PSToken token = tokens[i];
+      int action = table[stack.back().first][token.primaryToken];
+
+      if (!action) {
+        dbs("Syntatic Error");
+        db(token2String(token.primaryToken) _ stack);
+        return;
+      }
+      if(isReduction(action)) {
+        Reduction reduction = getReductionFromId(-action);
         dbs("Reduction to token " + token2String(reduction.leftToken));
 
         vector<Attrib> args;
@@ -30,17 +38,23 @@ public:
         auto nextAttrib = processSemantics(reduction, args);
 
         stack.push_back({ table[stack.back().first][reduction.leftToken], nextAttrib });
-        db(stack);
+      } else {
+        stack.push_back({ action, Attrib(token) });
+        i++;
+        db(token2String(token.primaryToken));
       }
-      stack.push_back({ nextState, Attrib(token) });
       db(stack);
-    }
+    } while (i < tokens.size());
   }
 private:
   vector<vector<int>> table;
 
   Attrib processSemantics(Reduction reduction, vector<Attrib> args) {
     return args[0];
+  }
+
+  inline bool isReduction(int action) {
+    return action < 0;
   }
 };
 

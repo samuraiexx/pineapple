@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <cstdarg>
 #include <assert.h>
+#include <fstream>
+#include <sstream>
 
 #include "token.h"
 #include "rules.h"
@@ -47,8 +49,35 @@ struct StateLine {
 
 class TableCreator {
 public:
-  TableCreator() {
+  TableCreator(bool recalcTable = false) {
+    if (!recalcTable) {
+      ifstream savedTable("table.txt", ios::in);
+      if (savedTable.is_open()) {
+        string line;
+        table.push_back(vector<int>(EXTOKEN_END));
+
+        getline(savedTable, line); // Ignore first line
+        while (!getline(savedTable, line).eof()) {
+          std::stringstream lineStream( line );
+          int x;
+          lineStream >> x;
+          db(line);
+
+          vector<int> tableLine;
+          do {
+            lineStream >> x;
+            tableLine.push_back(x);
+          } while (!lineStream.eof());
+
+          table.push_back(tableLine);
+        }
+        return;
+      }
+    }
+
     fillTable();
+    fstream tableFile("table.txt", ios::out | ios::trunc);
+    putTable(tableFile, table, false);
   }
 
   vector<vector<int>> getTable() {
@@ -246,6 +275,7 @@ private:
       }
       const int nextToken = ruleRight[stateLine.statePos];
 
+      // db(token2String(stateLine.genToken) _ ruleRight _ stateLine.lookAhead _ token2String(nextToken) _ stateLine.statePos _ state.id);
       next[nextToken].push_back(StateLine(stateLine.genToken, stateLine.line, stateLine.lookAhead, stateLine.statePos + 1));
     }
 
@@ -273,7 +303,7 @@ private:
       if (ruleRight.size() == stateLine.statePos) {
         //Reduction
         int reductionId = getReductionId(stateLine.genToken, stateLine.line);
-          // db("Reduction" _ state.id _ ruleRight _ stateLine.lookAhead _ token2String(stateLine.genToken) _ stateLine.line);
+        // db("Reduction" _ state.id _ token2String(stateLine.genToken) _ ruleRight _ stateLine.lookAhead _ stateLine.line);
         for (auto la : stateLine.lookAhead) {
           table[state.id][la] = -reductionId;
         }
@@ -302,6 +332,7 @@ private:
     vector<StateLine> stateLines;
 
     for (const auto& baseStateLine : baseStateLines) {
+      // db(token2String(baseStateLine.genToken) _ rules[baseStateLine.genToken][baseStateLine.line] _ baseStateLine.lookAhead _ baseStateLine.statePos);
       for (const auto& stateLine : genStateLines(baseStateLine)) {
         stateLines.push_back(stateLine);
       }
@@ -326,14 +357,22 @@ private:
 
   vector<StateLine> genStateLines(const StateLine& stateLine) {
     set<StateLine> vis;
-    return genStateLines(stateLine, vis);
+    auto x = genStateLines(stateLine, vis);
+    return x;
   }
 
-  vector<StateLine> genStateLines(const StateLine& stateLine, set<StateLine>& vis) {
-    // db(stateLine.genToken _ stateLine.line _ stateLine.lookAhead);
+  vector<StateLine> genStateLines(StateLine stateLine, set<StateLine>& vis) {
     if (vis.count(stateLine)) {
-      return {};
+      const auto& visitedStateLine = *vis.lower_bound(stateLine);
+      if (hasLookAhead(visitedStateLine, stateLine)) {
+        return {};
+      }
+
+      vector<StateLine> stateLines({ visitedStateLine, stateLine });
+      stateLine = mergeStateLines(stateLines)[0];
+      vis.erase(stateLine);
     }
+    // db(token2String(stateLine.genToken) _ stateLine.line _ stateLine.lookAhead);
     vis.insert(stateLine);
 
     vector<StateLine> stateLines = { stateLine };
@@ -346,6 +385,7 @@ private:
     auto& ruleLines = rules[genRuleLine[stateLine.statePos]];
     for (int i = 0; i < ruleLines.size(); i++) {
       int token = genRuleLine[stateLine.statePos];
+      // db(token2String(stateLine.genToken) _ genRuleLine _ stateLine.lookAhead _ getLookAhead(token, genRuleLine, stateLine.lookAhead));
       for (auto newStateLine : genStateLines(StateLine(token, i, getLookAhead(token, genRuleLine, stateLine.lookAhead)), vis)) {
         stateLines.push_back(newStateLine);
       }
@@ -365,6 +405,15 @@ private:
     return allEqual;
   }
 
+  bool hasLookAhead(const StateLine& a, const StateLine& b) {
+    for (const int token : b.lookAhead) {
+      if (find(a.lookAhead.begin(), a.lookAhead.end(), token) == a.lookAhead.end()) {
+        return false;
+      }
+    }
+
+    return true;
+  }
 
   vector<StateLine> mergeStateLines(vector<StateLine>& stateLines) {
     vector<StateLine> mergedLines;

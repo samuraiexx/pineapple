@@ -12,61 +12,27 @@
 
 using namespace std;
 
+bool getBoolFlag(int argc, char** argv, string flag);
+
 void main(int argc, char** argv) {
   Tokenizer tokenizer;
 
-  ifstream t("file.txt");
-  string code;
+  string codePath = "code.txt";
+  bool recalcTable = getBoolFlag(argc, argv, "RECALC_TABLE");
   
   if (argc == 1) {
-    code = R"(
-   type T1 = array[2] of integer;
-   type T2 = struct { s : string };
-
-   function main(x : integer): integer {
-     var x, y, z: integer;
-     var c : char;
-     var s : string;
-     x = 1;
-     y = 2;
-     z = 3;
-
-     c = 'a';
-     s = "a few words";
-     x = y + z;
-
-     if (x > 1) {
-       y++;
-       z = y * z;
-     }
-
-     while(x < 10 && y > 1){
-       x++;
-       z++;
-       if(z > 5) {
-         break;
-       }
-     }
+    cout << "This will be executed with the file code.txt, please pass the code file as an argument, f.e.: ./ExxCompiler file.txt\n";
+    cout << "You can also use the flag RECALC_TABLE to reprocess the action table\n";
+  } else if(!recalcTable || recalcTable && argc > 3) {
+    codePath = argv[1];
   }
 
-   function f(a: integer): char {
-   }
-    )";
-  } else {
-    ifstream t(argv[1]);
-    code = string(istreambuf_iterator<char>(t), istreambuf_iterator<char>());
-  }
-
+  ifstream t(codePath);
+  string code = string(istreambuf_iterator<char>(t), istreambuf_iterator<char>());
   code.push_back('\x03'); // End of Text
   const auto tokens = tokenizer.tokenizeCode(code);
 
-  /** Test Code for Tokenizer
-   ** 
-  for (auto t : x) {
-    cout << '(' << token2String(t.primaryToken) << ", " << t.secondaryToken << ')' << endl;
-  }
-  **/
-  TableCreator tableCreator;
+  TableCreator tableCreator(recalcTable);
   auto table = tableCreator.getTable();
 
   cout << table << endl;
@@ -75,4 +41,13 @@ void main(int argc, char** argv) {
   parser.parseCode(tokens);
 
   return;
+}
+
+bool getBoolFlag(int argc, char** argv, string flag) {
+  for (int i = 0; i < argc; i++) {
+    if (string(argv[i]) == flag) {
+      return true;
+    }
+  }
+  return false;
 }

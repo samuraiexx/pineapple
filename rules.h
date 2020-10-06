@@ -14,11 +14,13 @@ unordered_map<int, vector<vector<int>>> rules = {
   {P, {{LDE }}},
   {LDE, {{LDE, DE}, {DE}}},
   {DE, {{DF}, {DT} }},
-  {T, {{INTEGER}}},
-  {T, {{CHAR}}},
-  {T, {{BOOLEAN}}},
-  {T, {{STRING}}},
-  {T, {{ID}}},
+  {T, {
+    {INTEGER},
+    {CHAR},
+    {BOOLEAN},
+    {STRING},
+    {ID}
+  }},
   {DT, {
     {TYPE, ID, EQUALS, ARRAY, LEFT_SQUARE, NUMERAL, RIGHT_SQUARE, OF, T, SEMI_COLON},
     {TYPE, ID, EQUALS, STRUCT, LEFT_BRACES, DC, RIGHT_BRACES, SEMI_COLON},
@@ -31,7 +33,7 @@ unordered_map<int, vector<vector<int>>> rules = {
   {DF, {{
     FUNCTION, ID, LEFT_PARENTHESIS, LP, RIGHT_PARENTHESIS, COLON, T, B
   }}},
-  {LP, {{LP, COMMA, ID, COLON, TYPE}, {ID, COLON, TYPE}}},
+  {LP, {{LP, COMMA, ID, COLON, T}, {ID, COLON, T}}},
   {B, {{LEFT_BRACES, LDV, LS, RIGHT_BRACES}}},
   {LDV, {{LDV, DV}, {DV}}},
   {LS, {{LS, S}, {S}}},
@@ -60,6 +62,7 @@ unordered_map<int, vector<vector<int>>> rules = {
   {R, {{L, PLUS, Y}, {L, MINUS, Y}, {Y}}},
   {Y, {{Y, TIMES, F}, {Y, DIVIDE, F}, {F}}},
   {F, {
+    {LV},
     {PLUS_PLUS, LV },
     {MINUS_MINUS, LV},
     {LV, PLUS_PLUS},
