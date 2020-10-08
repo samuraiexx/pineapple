@@ -61,7 +61,7 @@ public:
           std::stringstream lineStream( line );
           int x;
           lineStream >> x;
-          db(line);
+          // db(line);
 
           vector<int> tableLine;
           do {
@@ -114,7 +114,7 @@ private:
     sort(la.begin(), la.end());
     la.resize(unique(la.begin(), la.end()) - la.begin());
 
-    // db(token2String(token) _ right _ lookAhead _ la);
+    // // db(token2String(token) _ right _ lookAhead _ la);
     return la;
   }
 
@@ -257,8 +257,8 @@ private:
     unordered_map<int, vector<StateLine>> next;
 
     const auto baseStateLine = baseStateLines[0];
-    dbs("Generating for " + token2String(baseStateLine.genToken) + " at line " + to_string(baseStateLine.line) + " and position " + to_string(baseStateLine.statePos));
-    // db(token2String(baseStateLine.genToken) _ baseStateLine.line _ baseStateLine.statePos);
+    // dbs("Generating for " + token2String(baseStateLine.genToken) + " at line " + to_string(baseStateLine.line) + " and position " + to_string(baseStateLine.statePos));
+    // // db(token2String(baseStateLine.genToken) _ baseStateLine.line _ baseStateLine.statePos);
 
     bool isDifferentState = genState(baseStateLines);
     if (!isDifferentState) {
@@ -275,7 +275,7 @@ private:
       }
       const int nextToken = ruleRight[stateLine.statePos];
 
-      // db(token2String(stateLine.genToken) _ ruleRight _ stateLine.lookAhead _ token2String(nextToken) _ stateLine.statePos _ state.id);
+      // // db(token2String(stateLine.genToken) _ ruleRight _ stateLine.lookAhead _ token2String(nextToken) _ stateLine.statePos _ state.id);
       next[nextToken].push_back(StateLine(stateLine.genToken, stateLine.line, stateLine.lookAhead, stateLine.statePos + 1));
     }
 
@@ -303,7 +303,7 @@ private:
       if (ruleRight.size() == stateLine.statePos) {
         //Reduction
         int reductionId = getReductionId(stateLine.genToken, stateLine.line);
-        // db("Reduction" _ state.id _ token2String(stateLine.genToken) _ ruleRight _ stateLine.lookAhead _ stateLine.line);
+        // // db("Reduction" _ state.id _ token2String(stateLine.genToken) _ ruleRight _ stateLine.lookAhead _ stateLine.line);
         for (auto la : stateLine.lookAhead) {
           table[state.id][la] = -reductionId;
         }
@@ -320,7 +320,7 @@ private:
       int nextStateId = fillTableDfs(nextBase.second);
 
       table[state.id][nextToken] = nextStateId;
-      // db("NextState" _ state.id _ token2String(nextToken) _ nextStateId);
+      // // db("NextState" _ state.id _ token2String(nextToken) _ nextStateId);
     }
 
     return state.id;
@@ -332,7 +332,7 @@ private:
     vector<StateLine> stateLines;
 
     for (const auto& baseStateLine : baseStateLines) {
-      // db(token2String(baseStateLine.genToken) _ rules[baseStateLine.genToken][baseStateLine.line] _ baseStateLine.lookAhead _ baseStateLine.statePos);
+      // // db(token2String(baseStateLine.genToken) _ rules[baseStateLine.genToken][baseStateLine.line] _ baseStateLine.lookAhead _ baseStateLine.statePos);
       for (const auto& stateLine : genStateLines(baseStateLine)) {
         stateLines.push_back(stateLine);
       }
@@ -372,7 +372,7 @@ private:
       stateLine = mergeStateLines(stateLines)[0];
       vis.erase(stateLine);
     }
-    // db(token2String(stateLine.genToken) _ stateLine.line _ stateLine.lookAhead);
+    // // db(token2String(stateLine.genToken) _ stateLine.line _ stateLine.lookAhead);
     vis.insert(stateLine);
 
     vector<StateLine> stateLines = { stateLine };
@@ -385,7 +385,7 @@ private:
     auto& ruleLines = rules[genRuleLine[stateLine.statePos]];
     for (int i = 0; i < ruleLines.size(); i++) {
       int token = genRuleLine[stateLine.statePos];
-      // db(token2String(stateLine.genToken) _ genRuleLine _ stateLine.lookAhead _ getLookAhead(token, genRuleLine, stateLine.lookAhead));
+      // // db(token2String(stateLine.genToken) _ genRuleLine _ stateLine.lookAhead _ getLookAhead(token, genRuleLine, stateLine.lookAhead));
       for (auto newStateLine : genStateLines(StateLine(token, i, getLookAhead(token, genRuleLine, stateLine.lookAhead)), vis)) {
         stateLines.push_back(newStateLine);
       }

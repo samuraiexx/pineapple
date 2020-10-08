@@ -27,18 +27,31 @@ void main(int argc, char** argv) {
     codePath = argv[1];
   }
 
+  ifstream p("banner.txt");
+  string banner = string(istreambuf_iterator<char>(p), istreambuf_iterator<char>());
+  cout << banner << endl;
+  
+  cout << "Running Pineapple compiler for code " << codePath << endl;
+
   ifstream t(codePath);
   string code = string(istreambuf_iterator<char>(t), istreambuf_iterator<char>());
   code.push_back('\x03'); // End of Text
-  const auto tokens = tokenizer.tokenizeCode(code);
 
+  cout << "Generating tokens... ";
+  const auto tokens = tokenizer.tokenizeCode(code);
+  cout << "Done" << endl;
+
+  cout << "Creating action table... ";
   TableCreator tableCreator(recalcTable);
   auto table = tableCreator.getTable();
+  cout << "Done" << endl;
 
-  cout << table << endl;
+  // cout << table << endl;
 
+  cout << "Parsing code... ";
   Parser parser(table);
   parser.parseCode(tokens);
+  cout << "Done" << endl;
 
   return;
 }

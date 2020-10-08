@@ -10,12 +10,12 @@ public:
   Parser(vector<vector<int>>& table) : table(table) {}
 
   void parseCode(const vector<PSToken> &tokens) {
-    db(tokens);
+    // db(tokens);
 
     vector<pair<int, Attrib>> stack({ {1, Attrib()} });
 
     int i = 0;
-    db(token2String(tokens[0].primaryToken));
+    // db(token2String(tokens[0].primaryToken));
 
     do {
       PSToken token = tokens[i];
@@ -28,7 +28,7 @@ public:
       }
       if(isReduction(action)) {
         Reduction reduction = getReductionFromId(-action);
-        dbs("Reduction to token " + token2String(reduction.leftToken));
+        // dbs("Reduction to token " + token2String(reduction.leftToken));
 
         vector<Attrib> args;
         for (int i = 0; i < reduction.len; i++) {
@@ -41,9 +41,9 @@ public:
       } else {
         stack.push_back({ action, Attrib(token) });
         i++;
-        db(token2String(token.primaryToken));
+        // db(token2String(token.primaryToken));
       }
-      db(stack);
+      // db(stack);
     } while (i < tokens.size());
   }
 private:
