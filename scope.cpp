@@ -1,4 +1,5 @@
 #include"scope.h"
+#include "debug.h"
 
 const int MAX_NEST_LEVEL = 100;
 
@@ -18,6 +19,7 @@ namespace Scope {
   }
 
   Object* define(int aName) {
+    // db(SymbolTable[nCurrentLevel]);
     Object* obj = new Object;
     obj->nName = aName;
     obj->pNext = nullptr;
@@ -28,6 +30,7 @@ namespace Scope {
       SymbolTableLast[nCurrentLevel]->pNext = obj;
       SymbolTableLast[nCurrentLevel] = obj;
     }
+    // db(SymbolTable[nCurrentLevel]);
     return obj;
   }
 

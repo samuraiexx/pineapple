@@ -24,11 +24,6 @@ struct PSToken {
 
 };
 
-std::ostream& operator<<(std::ostream& os, const PSToken &v) {
-  os << "{" << token2String(v.primaryToken) << ", " << v.secondaryToken << "}";
-  return os;
-}
-
 class Tokenizer {
 public:
   Tokenizer() {
@@ -129,6 +124,10 @@ public:
     }
 
     return t;
+  }
+
+  const unordered_map<string, int>& getName2TokenTable() const {
+    return name2sToken;
   }
 
 private:

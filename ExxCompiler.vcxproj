@@ -144,14 +144,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="debug.h" />
-    <ClInclude Include="paser.h" />
+    <ClInclude Include="parser.h" />
     <ClInclude Include="rules.h" />
+    <ClInclude Include="scope.h" />
     <ClInclude Include="tableCreator.h" />
     <ClInclude Include="token.h" />
     <ClInclude Include="tokenizer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="debug.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="parser.cpp" />
+    <ClCompile Include="rules.cpp" />
+    <ClCompile Include="scope.cpp" />
+    <ClCompile Include="token.cpp" />
     <ClCompile Include="tokenizer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

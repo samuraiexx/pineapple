@@ -1,14 +1,15 @@
-#include "debug.h"
-
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <streambuf>
 #include <set>
 
+#include "debug.h"
+
+#include "rules.h"
 #include "tokenizer.h"
 #include "tableCreator.h"
-#include "paser.h"
+#include "parser.h"
 
 using namespace std;
 
@@ -40,6 +41,7 @@ void main(int argc, char** argv) {
   cout << "Generating tokens... ";
   const auto tokens = tokenizer.tokenizeCode(code);
   cout << "Done" << endl;
+  // db(tokenizer.getName2TokenTable());
 
   cout << "Creating action table... ";
   TableCreator tableCreator(recalcTable);
