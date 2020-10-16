@@ -6,7 +6,7 @@
 					     (K) == SCALAR_TYPE)
 
 namespace Type {
-	enum Kind {
+	enum class Kind {
 		NO_KIND_DEF = -1,
 		VAR,
 		PARAM,

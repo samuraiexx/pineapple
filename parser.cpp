@@ -1,8 +1,10 @@
 #include "parser.h"
 #include "debug.h"
 #include "scope.h"
+#include "type.h"
 
 using namespace std;
+using Kind = Type::Kind;
 
 Parser::Parser(vector<vector<int>>& table) : table(table) {}
 
@@ -53,15 +55,15 @@ Attrib Parser::processSemantics(Reduction reduction, vector<Attrib> args) {
   // db(reduction _ args);
 
   switch (getReductionId(reduction)) {
-  case staticGetReductionId(NB, 0):
-    Scope::newBlock();
-    break;
   case staticGetReductionId(DT, 1):
     Scope::endBlock();
     break;
   case staticGetReductionId(DF, 0):
     Scope::endBlock();
     break;
+  case staticGetReductionId(NB, 0):
+      Scope::newBlock();
+      break;
   case staticGetReductionId(IDD, 0):
     attrib = idDefinition(args);
     break;
@@ -95,6 +97,7 @@ Attrib Parser::idDefinition(const vector<Attrib>& args) {
   else {
     obj = Scope::define(name);
   }
+  obj->eKind = Kind::NO_KIND_DEF;
   IDD.obj = obj;
 
   return IDD;
