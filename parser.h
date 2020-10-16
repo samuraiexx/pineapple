@@ -6,6 +6,7 @@
 #include "tokenizer.h"
 #include "rules.h"
 #include "scope.h"
+#include "type.h"
 
 struct Attrib {
   int secondaryToken;

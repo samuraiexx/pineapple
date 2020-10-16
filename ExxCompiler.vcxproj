@@ -143,7 +143,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="builtin.h" />
     <ClInclude Include="debug.h" />
+    <ClInclude Include="type.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="rules.h" />
     <ClInclude Include="scope.h" />

@@ -50,7 +50,7 @@ void main(int argc, char** argv) {
 
   // cout << table << endl;
 
-  cout << "Parsing code... ";
+  cout << "Parsing code... " << endl;
   Parser parser(table);
   parser.parseCode(tokens);
   cout << "Done" << endl;
