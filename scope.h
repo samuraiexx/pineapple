@@ -32,7 +32,7 @@ namespace Scope {
         struct {
             Object* pBaseType;
         } Alias;
-    };
+    } __;
   };
 
   int newBlock(void);

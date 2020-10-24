@@ -4,20 +4,20 @@
 #include "scope.h"
 
 namespace BuiltIn {
-	using Object = Scope::Object;
+	using Kind = Type::Kind;
 
-	Object Int = { -1, NULL, Type::SCALAR_TYPE };
-	Object* pInt = &Int;
+	Scope::Object Int = { -1, NULL, Kind::SCALAR_TYPE };
+	Scope::Object* pInt = &Int;
 
-	Object Char = { -1, NULL, Type::SCALAR_TYPE };
-	Object* pChar = &Char;
+	Scope::Object Char = { -1, NULL, Kind::SCALAR_TYPE };
+	Scope::Object* pChar = &Char;
 
-	Object Bool = { -1, NULL, Type::SCALAR_TYPE };
-	Object* pBool = &Bool;
+	Scope::Object Bool = { -1, NULL, Kind::SCALAR_TYPE };
+	Scope::Object* pBool = &Bool;
 
-	Object String = { -1, NULL, Type::SCALAR_TYPE };
-	Object* pString = &String;
+	Scope::Object String = { -1, NULL, Kind::SCALAR_TYPE };
+	Scope::Object* pString = &String;
 
-	Object Universal = { -1, NULL, Type::UNIVERSAL };
-	Object* pUniversal = &Universal;
+	Scope::Object Universal = { -1, NULL, Kind::UNIVERSAL };
+	Scope::Object* pUniversal = &Universal;
 };

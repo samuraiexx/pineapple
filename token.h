@@ -21,7 +21,7 @@ enum Token {
 enum ExToken {
   P = Token::TOKEN_END, LDE, DE, DF, DT, T, B, LDV, LS,
   DV, LI, E, S, LV, L, R, Y, F, LP, LE, DC, P2, NB, IDD, IDU,
-  _ID, _FALSE, _TRUE, _CHARACTER, _STRINGVAL, _NUMERAL,
-  EXTOKEN_END
+  _ID, _FALSE, _TRUE, _CHARACTER, _STRINGVAL, _NUMERAL, MF, MC,
+  EXTOKEN_END,
 };
 

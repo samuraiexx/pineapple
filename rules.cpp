@@ -42,7 +42,7 @@ unordered_map<int, vector<vector<int>>> rules = {
      {LI, COLON, T}
    }},
    {DF, {{
-     FUNCTION, IDD, NB, LEFT_PARENTHESIS, LP, RIGHT_PARENTHESIS, COLON, T, B
+     FUNCTION, IDD, NB, LEFT_PARENTHESIS, LP, RIGHT_PARENTHESIS, COLON, T, MF, B
    }}},
    {LP, {{LP, COMMA, IDD, COLON, T}, {IDD, COLON, T}}},
    {B, {{LEFT_BRACES, LDV, LS, RIGHT_BRACES}}},
@@ -100,6 +100,8 @@ unordered_map<int, vector<vector<int>>> rules = {
    {_CHARACTER, {{CHARACTER}}},
    {_STRINGVAL, {{STRINGVAL}}},
    {_NUMERAL, {{NUMERAL}}},
+   {MF, {{}}},
+   {MC, {{}}},
 };
 // */
 

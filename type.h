@@ -1,10 +1,5 @@
 #pragma once
 
-#define IS_TYPE_KIND(k) ((k) == ARRAY_TYPE || \
-                         (k) == STRUCT_TYPE || \
-						 (k) == ALIAS_TYPE || \
-					     (K) == SCALAR_TYPE)
-
 namespace Type {
 	enum class Kind {
 		NO_KIND_DEF = -1,
@@ -18,4 +13,11 @@ namespace Type {
 		SCALAR_TYPE,
 		UNIVERSAL
 	};
+
+	inline bool IS_TYPE_KIND(Kind k) {
+			return (k) == Kind::ARRAY_TYPE ||
+						    (k) == Kind::STRUCT_TYPE ||
+					     (k) == Kind::ALIAS_TYPE ||
+							   (k) == Kind::SCALAR_TYPE;
+	}
 }
