@@ -20,7 +20,7 @@ struct Attrib {
   bool err;
   int n;
 
-  Attrib() : secondaryToken(-1), obj(nullptr), type(nullptr), list(nullptr), pos(0), val(0) {}
+  Attrib() : secondaryToken(-1), obj(nullptr), type(nullptr), list(nullptr), param(nullptr), pos(0), val(0), name(0), err(false), n(0) {}
 };
 
 class Parser {

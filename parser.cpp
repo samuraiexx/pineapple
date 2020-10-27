@@ -74,6 +74,7 @@ void Parser::parseCode(const vector<PSToken>& tokens) {
         args.push_back(stack.back().second);
         stack.pop_back();
       }
+      reverse(args.begin(), args.end());
       auto nextAttrib = processSemantics(reduction, args);
 
       stack.push_back({ table[stack.back().first][reduction.leftToken], nextAttrib });
@@ -92,8 +93,8 @@ void Parser::parseCode(const vector<PSToken>& tokens) {
 
 Attrib Parser::processSemantics(Reduction reduction, vector<Attrib> args) {
   Attrib attrib;
-  // db(reduction _ args);
-
+  db(reduction _ args);
+  
   switch (getReductionId(reduction)) {
   case staticGetReductionId(T, 0):
     attrib = integerType();
@@ -351,14 +352,13 @@ Attrib Parser::declaredType(const vector<Attrib>& args) {
 }
 
 Attrib Parser::arrayDeclaration(const vector<Attrib>& args) {
-  Attrib IDD = args[0];
-  Attrib NUM = args[1];
-  Attrib T = args[2];
+  Attrib IDD = args[1];
+  Attrib NUM = args[5];
+  Attrib T = args[8];
 
   Scope::Object* p = IDD.obj;
   int n = NUM.val;
   Scope::Object* t = T.type;
-
   p->eKind = Kind::ARRAY_TYPE;
   p->__.Array.nNumElems = n;
   p->__.Array.pElemType = t;
@@ -368,8 +368,8 @@ Attrib Parser::arrayDeclaration(const vector<Attrib>& args) {
 }
 
 Attrib Parser::structDeclaration(const vector<Attrib>& args) {
-  Attrib IDD = args[0];
-  Attrib DC = args[2];
+  Attrib IDD = args[1];
+  Attrib DC = args[6];
 
   Scope::Object* p = IDD.obj;
 
@@ -383,8 +383,8 @@ Attrib Parser::structDeclaration(const vector<Attrib>& args) {
 }
 
 Attrib Parser::aliasDeclaration(const vector<Attrib>& args) {
-  Attrib IDD = args[0];
-  Attrib T = args[1];
+  Attrib IDD = args[1];
+  Attrib T = args[3];
 
   Scope::Object* p = IDD.obj;
   Scope::Object* t = T.type;
@@ -398,8 +398,8 @@ Attrib Parser::aliasDeclaration(const vector<Attrib>& args) {
 
 Attrib Parser::fieldList(const vector<Attrib>& args) {
   Attrib DC1 = args[0];
-  Attrib LI = args[1];
-  Attrib T = args[2];
+  Attrib LI = args[2];
+  Attrib T = args[4];
 
   Scope::Object* p = LI.list;
   Scope::Object* t = T.type;
@@ -417,7 +417,7 @@ Attrib Parser::fieldList(const vector<Attrib>& args) {
 
 Attrib Parser::fieldListElement(const vector<Attrib>& args) {
   Attrib LI = args[0];
-  Attrib T = args[1];
+  Attrib T = args[2];
 
   Scope::Object* p = LI.obj;
   Scope::Object* t = T.type;
@@ -435,8 +435,8 @@ Attrib Parser::fieldListElement(const vector<Attrib>& args) {
 
 Attrib Parser::parameterList(const vector<Attrib>& args) {
   Attrib LP1 = args[0];
-  Attrib IDD = args[1];
-  Attrib T = args[2];
+  Attrib IDD = args[2];
+  Attrib T = args[4];
 
   Scope::Object* p = IDD.obj;
   Scope::Object* t = T.type;
@@ -451,7 +451,7 @@ Attrib Parser::parameterList(const vector<Attrib>& args) {
 
 Attrib Parser::parameterListElement(const vector<Attrib>& args) {
   Attrib IDD = args[0];
-  Attrib T = args[1];
+  Attrib T = args[2];
 
   Scope::Object* p = IDD.obj;
   Scope::Object* t = T.type;
@@ -465,8 +465,8 @@ Attrib Parser::parameterListElement(const vector<Attrib>& args) {
 }
 
 Attrib Parser::variableDeclaration(const vector<Attrib>& args) {
-  const Attrib LI = args[0];
-  const Attrib T = args[1];
+  const Attrib LI = args[1];
+  const Attrib T = args[3];
 
   Scope::Object* p = LI.list;
   Scope::Object* t = T.type;
@@ -498,7 +498,7 @@ Attrib Parser::identifierList(const vector<Attrib>& args) {
 }
 
 Attrib Parser::ifStatement(const vector<Attrib>& args) {
-  const Attrib E = args[0];
+  const Attrib E = args[2];
   Scope::Object* t = E.type;
   if (!checkTypes(t, BuiltIn::pBool)) {
     dbs("ERR_BOOL_TYPE_EXPECTED");
@@ -508,7 +508,7 @@ Attrib Parser::ifStatement(const vector<Attrib>& args) {
 }
 
 Attrib Parser::ifElseStatement(const vector<Attrib>& args) {
-  const Attrib E = args[0];
+  const Attrib E = args[2];
   Scope::Object* t = E.type;
   if (!checkTypes(t, BuiltIn::pBool)) {
     dbs("ERR_BOOL_TYPE_EXPECTED");
@@ -518,7 +518,7 @@ Attrib Parser::ifElseStatement(const vector<Attrib>& args) {
 }
 
 Attrib Parser::whileStatement(const vector<Attrib>& args) {
-  const Attrib E = args[0];
+  const Attrib E = args[2];
   Scope::Object* t = E.type;
   if (!checkTypes(t, BuiltIn::pBool)) {
     dbs("ERR_BOOL_TYPE_EXPECTED");
@@ -528,7 +528,7 @@ Attrib Parser::whileStatement(const vector<Attrib>& args) {
 }
 
 Attrib Parser::doWhileStatement(const vector<Attrib>& args) {
-  const Attrib E = args[1];
+  const Attrib E = args[4];
   Scope::Object* t = E.type;
   if (!checkTypes(t, BuiltIn::pBool)) {
     dbs("ERR_BOOL_TYPE_EXPECTED");
@@ -539,7 +539,7 @@ Attrib Parser::doWhileStatement(const vector<Attrib>& args) {
 
 Attrib Parser::assignment(const vector<Attrib>& args) {
   const Attrib LV = args[0];
-  const Attrib E = args[0];
+  const Attrib E = args[2];
   Scope::Object* tLV = LV.type;
   Scope::Object* tE = E.type;
   if(!checkTypes(tLV, tE)) {
@@ -551,7 +551,7 @@ Attrib Parser::assignment(const vector<Attrib>& args) {
 
 Attrib Parser::logicOperationAnd(const vector<Attrib>& args) {
   const Attrib E = args[0];
-  const Attrib L = args[1];
+  const Attrib L = args[2];
 
   if(!checkTypes(E.type, BuiltIn::pBool)) {
     dbs("ERR_BOOL_TYPE_EXPECTED");
@@ -568,7 +568,7 @@ Attrib Parser::logicOperationAnd(const vector<Attrib>& args) {
 
 Attrib Parser::logicOperationOr(const vector<Attrib>& args) {
   const Attrib E = args[0];
-  const Attrib L = args[1];
+  const Attrib L = args[2];
 
   if(!checkTypes(E.type, BuiltIn::pBool)) {
     dbs("ERR_BOOL_TYPE_EXPECTED");
@@ -593,7 +593,7 @@ Attrib Parser::uniqueLogicOperand(const vector<Attrib>& args) {
 
 Attrib Parser::lessComparation(const vector<Attrib>& args) {
   const Attrib L = args[0];
-  const Attrib R = args[1];
+  const Attrib R = args[2];
 
   if (!checkTypes(L.type, R.type)) {
     dbs("ERR_TYPE_MISMATCH");
@@ -606,7 +606,7 @@ Attrib Parser::lessComparation(const vector<Attrib>& args) {
 
 Attrib Parser::greaterComparation(const vector<Attrib>& args) {
   const Attrib L = args[0];
-  const Attrib R = args[1];
+  const Attrib R = args[2];
 
   if (!checkTypes(L.type, R.type)) {
     dbs("ERR_TYPE_MISMATCH");
@@ -619,7 +619,7 @@ Attrib Parser::greaterComparation(const vector<Attrib>& args) {
 
 Attrib Parser::lessOrEqualComparation(const vector<Attrib>& args) {
   const Attrib L = args[0];
-  const Attrib R = args[1];
+  const Attrib R = args[2];
 
   if (!checkTypes(L.type, R.type)) {
     dbs("ERR_TYPE_MISMATCH");
@@ -632,7 +632,7 @@ Attrib Parser::lessOrEqualComparation(const vector<Attrib>& args) {
 
 Attrib Parser::greaterOrEqualComparation(const vector<Attrib>& args) {
   const Attrib L = args[0];
-  const Attrib R = args[1];
+  const Attrib R = args[2];
 
   if (!checkTypes(L.type, R.type)) {
     dbs("ERR_TYPE_MISMATCH");
@@ -645,7 +645,7 @@ Attrib Parser::greaterOrEqualComparation(const vector<Attrib>& args) {
 
 Attrib Parser::equalComparation(const vector<Attrib>& args) {
   const Attrib L = args[0];
-  const Attrib R = args[1];
+  const Attrib R = args[2];
 
   if (!checkTypes(L.type, R.type)) {
     dbs("ERR_TYPE_MISMATCH");
@@ -658,7 +658,7 @@ Attrib Parser::equalComparation(const vector<Attrib>& args) {
 
 Attrib Parser::notEqualComparation(const vector<Attrib>& args) {
   const Attrib L = args[0];
-  const Attrib R = args[1];
+  const Attrib R = args[2];
 
   if (!checkTypes(L.type, R.type)) {
     dbs("ERR_TYPE_MISMATCH");
@@ -679,7 +679,7 @@ Attrib Parser::rValueComparation(const vector<Attrib>& args) {
 
 Attrib Parser::arithmeticSum(const vector<Attrib>& args) {
   const Attrib R = args[0];
-  const Attrib Y = args[1];
+  const Attrib Y = args[2];
 
   if (!checkTypes(R.type, Y.type)) {
     dbs("ERR_TYPE_MISMATCH");
@@ -696,7 +696,7 @@ Attrib Parser::arithmeticSum(const vector<Attrib>& args) {
 
 Attrib Parser::arithmeticSub(const vector<Attrib>& args) {
   const Attrib R = args[0];
-  const Attrib Y = args[1];
+  const Attrib Y = args[2];
 
   if (!checkTypes(R.type, Y.type)) {
     dbs("ERR_TYPE_MISMATCH");
@@ -720,7 +720,7 @@ Attrib Parser::arithmeticRY(const vector<Attrib>& args) {
 
 Attrib Parser::arithmeticMul(const vector<Attrib>& args) {
   const Attrib Y = args[0];
-  const Attrib F = args[1];
+  const Attrib F = args[2];
 
   if (!checkTypes(Y.type, F.type)) {
     dbs("ERR_TYPE_MISMATCH");
@@ -736,7 +736,7 @@ Attrib Parser::arithmeticMul(const vector<Attrib>& args) {
 
 Attrib Parser::arithmeticDiv(const vector<Attrib>& args) {
   const Attrib Y = args[0];
-  const Attrib F = args[1];
+  const Attrib F = args[2];
 
   if (!checkTypes(Y.type, F.type)) {
     dbs("ERR_TYPE_MISMATCH");
@@ -767,7 +767,7 @@ Attrib Parser::unaryFLV(const vector<Attrib>& args) {
 }
 
 Attrib Parser::unaryLPlusPlus(const vector<Attrib>& args) {
-  const Attrib LV = args[0];
+  const Attrib LV = args[1];
   Scope::Object* t = LV.type;
 
   if(!checkTypes(t, BuiltIn::pInt)) {
@@ -780,7 +780,7 @@ Attrib Parser::unaryLPlusPlus(const vector<Attrib>& args) {
 }
 
 Attrib Parser::unaryLMinusMinus(const vector<Attrib>& args) {
-  const Attrib LV = args[0];
+  const Attrib LV = args[1];
   Scope::Object* t = LV.type;
 
   if(!checkTypes(t, BuiltIn::pInt)) {
@@ -819,7 +819,7 @@ Attrib Parser::unaryRMinusMinus(const vector<Attrib>& args) {
 }
 
 Attrib Parser::unaryParenthesis(const vector<Attrib>& args) {
-  const Attrib E = args[0];
+  const Attrib E = args[1];
 
   Attrib F;
   F.type = E.type;
@@ -829,7 +829,7 @@ Attrib Parser::unaryParenthesis(const vector<Attrib>& args) {
 Attrib Parser::functionCall(const vector<Attrib>& args) {
   const Attrib IDU = args[0];
   const Attrib MC = args[1];
-  const Attrib LE = args[2];
+  const Attrib LE = args[3];
   Attrib F;
   F.type = MC.type;
 
@@ -843,7 +843,7 @@ Attrib Parser::functionCall(const vector<Attrib>& args) {
 }
 
 Attrib Parser::unaryMinus(const vector<Attrib>& args) {
-  const Attrib LV = args[0];
+  const Attrib LV = args[1];
   Scope::Object* t = LV.type;
 
   if(!checkTypes(t, BuiltIn::pInt)) {
@@ -856,7 +856,7 @@ Attrib Parser::unaryMinus(const vector<Attrib>& args) {
 }
 
 Attrib Parser::unaryNot(const vector<Attrib>& args) {
-  const Attrib LV = args[0];
+  const Attrib LV = args[1];
   Scope::Object* t = LV.type;
 
   if(!checkTypes(t, BuiltIn::pBool)) {
@@ -900,7 +900,7 @@ Attrib Parser::unaryNum() {
 
 Attrib Parser::callArgumentList(const vector<Attrib>& args) {
   const Attrib LE = args[0];
-  const Attrib E = args[1];
+  const Attrib E = args[2];
   Attrib LE0;
   LE0.param = NULL;
   LE0.err = LE.err;
@@ -951,7 +951,7 @@ Attrib Parser::callArgumentListElement(const vector<Attrib>& args) {
 
 Attrib Parser::structFieldAccess(const vector<Attrib>& args) {
   const Attrib LV = args[0];
-  const Attrib ID = args[1];
+  const Attrib ID = args[2];
   Scope::Object* t = LV.type;
 
   Attrib LV0;
@@ -984,7 +984,7 @@ Attrib Parser::structFieldAccess(const vector<Attrib>& args) {
 
 Attrib Parser::arrayIndexAccess(const vector<Attrib>& args) {
   const Attrib LV = args[0];
-  const Attrib E = args[1];
+  const Attrib E = args[2];
   Scope::Object* t = LV.type;
 
   Attrib LV0;
@@ -1104,6 +1104,8 @@ Attrib Parser::functionMarker(const std::vector<Attrib>& args) {
   Attrib LP = TopSem(-1);
   Attrib NB = TopSem(-2);
   Attrib IDD = TopSem(-3);
+
+  dbs("calling function marker");
 
   Scope::Object* f = IDD.obj;
   f->eKind = Kind::FUNCTION;

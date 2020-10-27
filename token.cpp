@@ -170,6 +170,10 @@ std::string token2String(int t) {
     return "_STRINGVAL";
   case ExToken::_NUMERAL:
     return "_NUMERAL";
+  case ExToken::MC:
+    return "MC";
+  case ExToken::MF:
+    return "MF";
   case ExToken::EXTOKEN_END:
     return "EXTOKEN_END";
   case Token::UNKNOWN:

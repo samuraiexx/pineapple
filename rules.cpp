@@ -79,7 +79,7 @@ unordered_map<int, vector<vector<int>>> rules = {
      {LV, PLUS_PLUS},
      {LV, MINUS_MINUS},
      {LEFT_PARENTHESIS, E, RIGHT_PARENTHESIS},
-     {IDU, LEFT_PARENTHESIS, LE, RIGHT_PARENTHESIS},
+     {IDU, MC, LEFT_PARENTHESIS, LE, RIGHT_PARENTHESIS},
      {MINUS, F},
      {NOT, F},
      {TRUE},
