@@ -30,7 +30,7 @@ public:
 
 private:
   std::vector<std::vector<int>> table;
-  Attrib processSemantics(Reduction reduction, std::vector<Attrib> args);
+  Attrib processSemantics(Reduction reduction, std::vector<Attrib> args, std::vector<pair<int, Attrib>> semantics);
   inline bool isReduction(int action);
 
   Attrib integerType();
@@ -84,7 +84,7 @@ private:
   Attrib unaryStr();
   Attrib unaryNum();
   Attrib callArgumentList(const vector<Attrib>& args);
-  Attrib callArgumentListElement(const vector<Attrib>& args);
+  Attrib callArgumentListElement(const vector<Attrib>& args, const vector<pair<int, Attrib>>& semantics);
   Attrib structFieldAccess(const std::vector<Attrib>& args);
   Attrib arrayIndexAccess(const std::vector<Attrib>& args);
   Attrib lvIDU(const std::vector<Attrib>& args);
@@ -95,6 +95,6 @@ private:
   Attrib charValue(const std::vector<Attrib> &args);
   Attrib stringValue(const std::vector<Attrib>& args);
   Attrib numValue(const std::vector<Attrib>& args);
-  Attrib functionMarker(const std::vector<Attrib>& args);
-  Attrib callMarker(const std::vector<Attrib>& args);
+  Attrib functionMarker(const std::vector<Attrib>& args, const vector<pair<int, Attrib>>& semantics);
+  Attrib callMarker(const std::vector<Attrib>& args, const vector<pair<int, Attrib>>& semantics);
 };

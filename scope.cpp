@@ -5,7 +5,7 @@ const int MAX_NEST_LEVEL = 100;
 
 Scope::Object* SymbolTable[MAX_NEST_LEVEL];
 Scope::Object* SymbolTableLast[MAX_NEST_LEVEL];
-int nCurrentLevel = -1;
+int nCurrentLevel = 0;
 
 namespace Scope {
   int newBlock() {

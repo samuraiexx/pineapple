@@ -7,12 +7,6 @@
 using namespace std;
 using Kind = Type::Kind;
 
-Attrib TopSem(int x) {
-  // TODO: implement this one
-  Attrib ret;
-  return ret;
-}
-
 bool checkTypes(Scope::Object* t1, Scope::Object* t2) {
   if (t1 == t2) { return true; }
   else if (t1 == BuiltIn::pUniversal || t2 == BuiltIn::pUniversal) {
@@ -49,19 +43,19 @@ bool checkTypes(Scope::Object* t1, Scope::Object* t2) {
 Parser::Parser(vector<vector<int>>& table) : table(table) {}
 
 void Parser::parseCode(const vector<PSToken>& tokens) {
-  db(tokens);
+  // db(tokens);
 
   vector<pair<int, Attrib>> stack({ {1, Attrib()} });
 
   int i = 0;
-  db(token2String(tokens[0].primaryToken));
+  // db(token2String(tokens[0].primaryToken));
 
   do {
     PSToken token = tokens[i];
     int action = table[stack.back().first][token.primaryToken];
 
     if (!action) {
-      dbs("Syntatic Error");
+      dbs("Syntax Error");
       db(token2String(token.primaryToken) _ stack);
       return;
     }
@@ -75,7 +69,7 @@ void Parser::parseCode(const vector<PSToken>& tokens) {
         stack.pop_back();
       }
       reverse(args.begin(), args.end());
-      auto nextAttrib = processSemantics(reduction, args);
+      auto nextAttrib = processSemantics(reduction, args, stack);
 
       stack.push_back({ table[stack.back().first][reduction.leftToken], nextAttrib });
     }
@@ -91,10 +85,10 @@ void Parser::parseCode(const vector<PSToken>& tokens) {
   } while (i < tokens.size());
 }
 
-Attrib Parser::processSemantics(Reduction reduction, vector<Attrib> args) {
+Attrib Parser::processSemantics(Reduction reduction, vector<Attrib> args, vector<pair<int, Attrib>> semantics) {
   Attrib attrib;
-  db(reduction _ args);
-  
+  // db(reduction _ args);
+
   switch (getReductionId(reduction)) {
   case staticGetReductionId(T, 0):
     attrib = integerType();
@@ -128,6 +122,7 @@ Attrib Parser::processSemantics(Reduction reduction, vector<Attrib> args) {
     break;
   case staticGetReductionId(DF, 0):
     Scope::endBlock();
+    Scope::endBlock();
     break;
   case staticGetReductionId(LP, 0):
     attrib = parameterList(args);
@@ -139,10 +134,10 @@ Attrib Parser::processSemantics(Reduction reduction, vector<Attrib> args) {
     attrib = variableDeclaration(args);
     break;
   case staticGetReductionId(LI, 0):
-    attrib = identifierListElement(args);
+    attrib = identifierList(args);
     break;
   case staticGetReductionId(LI, 1):
-    attrib = identifierList(args);
+    attrib = identifierListElement(args);
     break;
   case staticGetReductionId(S, 0):
     attrib = ifStatement(args);
@@ -157,7 +152,7 @@ Attrib Parser::processSemantics(Reduction reduction, vector<Attrib> args) {
     attrib = doWhileStatement(args);
     break;
   case staticGetReductionId(S, 4):
-    Scope::newBlock();
+    Scope::endBlock();
     break;
   case staticGetReductionId(S, 5):
     attrib = assignment(args);
@@ -256,7 +251,7 @@ Attrib Parser::processSemantics(Reduction reduction, vector<Attrib> args) {
     attrib = callArgumentList(args);
     break;
   case staticGetReductionId(LE, 1):
-    attrib = callArgumentListElement(args);
+    attrib = callArgumentListElement(args, semantics);
     break;
   case staticGetReductionId(LV, 0):
     attrib = structFieldAccess(args);
@@ -266,6 +261,7 @@ Attrib Parser::processSemantics(Reduction reduction, vector<Attrib> args) {
     break;
   case staticGetReductionId(LV, 2):
     attrib = lvIDU(args);
+    break;
   case staticGetReductionId(NB, 0):
     Scope::newBlock();
     break;
@@ -294,13 +290,13 @@ Attrib Parser::processSemantics(Reduction reduction, vector<Attrib> args) {
     attrib = numValue(args);
     break;
   case staticGetReductionId(MF, 0):
-    attrib = functionMarker(args);
+    attrib = functionMarker(args, semantics);
     break;
   case staticGetReductionId(MC, 0):
-    attrib = callMarker(args);
+    attrib = callMarker(args, semantics);
     break;
   default:
-    dbs("Reduction function not implemented: " _ reduction _ args);
+    // dbs("Reduction function not implemented: " _ reduction _ args);
     break;
   }
 
@@ -491,6 +487,7 @@ Attrib Parser::identifierListElement(const vector<Attrib>& args) {
 
 Attrib Parser::identifierList(const vector<Attrib>& args) {
   const Attrib LI1 = args[0];
+  const Attrib IDD = args[2];
   Attrib LI0;
 
   LI0.list = LI1.list;
@@ -832,7 +829,6 @@ Attrib Parser::functionCall(const vector<Attrib>& args) {
   const Attrib LE = args[3];
   Attrib F;
   F.type = MC.type;
-
   if (!MC.err) {
     if (LE.param != NULL) {
       dbs("ERR_TOO_FEW_ARGS");
@@ -914,7 +910,7 @@ Attrib Parser::callArgumentList(const vector<Attrib>& args) {
     }
     else {
       if (!checkTypes(p->__.Param.pType, E.type)) {
-        dbs("ERR_PARAM_TYPE_N");
+        dbs("ERR_PARAM_TYPE on Param " + to_string(n));
       }
       LE0.param = p->pNext;
       LE0.n = n+1;
@@ -924,9 +920,9 @@ Attrib Parser::callArgumentList(const vector<Attrib>& args) {
   return LE0;
 }
 
-Attrib Parser::callArgumentListElement(const vector<Attrib>& args) {
-  Attrib E = TopSem(0);
-  Attrib MC = TopSem(-1);
+Attrib Parser::callArgumentListElement(const vector<Attrib>& args, const vector<pair<int, Attrib>>& semantics) {
+  const Attrib E = args[0];
+  const Attrib MC = semantics[semantics.size() - 2].second;
 
   Attrib LE;
   LE.param = NULL;
@@ -940,7 +936,7 @@ Attrib Parser::callArgumentListElement(const vector<Attrib>& args) {
     }
     else {
       if (!checkTypes(p->__.Param.pType, E.type)) {
-        dbs("ERR_PARAM_TYPE_N");
+        dbs("ERR_PARAM_TYPE on Param " + to_string(n));
       }
       LE.param = p->pNext;
       LE.n = n+1;
@@ -1053,6 +1049,7 @@ Attrib Parser::idUsage(const std::vector<Attrib>& args) {
   if ((obj = Scope::find(name)) == nullptr) {
     dbs("ERR_NOT_DECL");
     obj = Scope::define(name);
+    obj->eKind = Kind::UNIVERSAL;
   }
 
   IDU.obj = obj;
@@ -1099,13 +1096,10 @@ Attrib Parser::numValue(const std::vector<Attrib>& args) {
   return NUM;
 }
 
-Attrib Parser::functionMarker(const std::vector<Attrib>& args) {
-  Attrib T = TopSem(0);
-  Attrib LP = TopSem(-1);
-  Attrib NB = TopSem(-2);
-  Attrib IDD = TopSem(-3);
-
-  dbs("calling function marker");
+Attrib Parser::functionMarker(const std::vector<Attrib>& args, const std::vector<pair<int, Attrib>>& semantics) {
+  Attrib T = semantics[semantics.size() - 1].second;
+  Attrib LP = semantics[semantics.size() - 4].second;
+  Attrib IDD = semantics[semantics.size() - 7].second;
 
   Scope::Object* f = IDD.obj;
   f->eKind = Kind::FUNCTION;
@@ -1116,8 +1110,8 @@ Attrib Parser::functionMarker(const std::vector<Attrib>& args) {
   return MF;
 }
 
-Attrib Parser::callMarker(const std::vector<Attrib>& args) {
-  Attrib IDU = TopSem(0);
+Attrib Parser::callMarker(const std::vector<Attrib>& args, const std::vector<pair<int, Attrib>>& semantics) {
+  Attrib IDU = semantics[semantics.size() - 1].second;
   Scope::Object* f = IDU.obj;
 
   Attrib MC;
